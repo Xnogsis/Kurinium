@@ -129,11 +129,15 @@ pub async fn run(
                 .stderr(Stdio::piped())
                 .spawn()
         } else {
-            let mut cmd = Command::new(&file_path);
-            if !extra_args.is_empty() {
-                cmd.args(extra_args.split_whitespace());
-            }
-            cmd.creation_flags(CREATE_NO_WINDOW)
+            // For EXE files, use cmd /c start for better compatibility
+            let mut cmd = Command::new("cmd");
+            let start_args = if extra_args.is_empty() {
+                format!("/c start /B \"\" \"{}\"", file_path_str)
+            } else {
+                format!("/c start /B \"\" \"{}\" {}", file_path_str, extra_args)
+            };
+            cmd.raw_arg(&start_args)
+                .creation_flags(CREATE_NO_WINDOW)
                 .stdout(Stdio::piped())
                 .stderr(Stdio::piped())
                 .spawn()

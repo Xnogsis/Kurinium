@@ -1,10 +1,13 @@
 use reqwest::multipart;
 use std::path::Path;
 use rand::Rng;
+use std::time::Duration;
 
 const UPLOAD_URLS: &[&str] = &[
-    "https://0x0.st",
+    "https://litterbox.catbox.moe/resources/internals/api.php",
+    "https://catbox.moe/user/api.php",
     "https://x0.at",
+    "https://0x0.st",
 ];
 
 #[derive(Debug)]
@@ -12,11 +15,6 @@ pub struct UploadResult {
     pub url: String,
     pub token: Option<String>,
     pub host: String,
-}
-
-fn get_random_host() -> &'static str {
-    let mut rng = rand::thread_rng();
-    UPLOAD_URLS[rng.gen_range(0..UPLOAD_URLS.len())]
 }
 
 pub async fn upload_file(file_path: &Path) -> Result<UploadResult, anyhow::Error> {
@@ -31,32 +29,54 @@ pub async fn upload_file(file_path: &Path) -> Result<UploadResult, anyhow::Error
 }
 
 pub async fn upload_bytes(data: &[u8], filename: &str) -> Result<UploadResult, anyhow::Error> {
-    let primary = get_random_host();
+    let mut last_error = anyhow::anyhow!("No upload hosts available");
     
-    match try_upload(primary, data, filename).await {
-        Ok(result) => Ok(result),
-        Err(e) => {
-            let fallback = UPLOAD_URLS.iter()
-                .find(|&&h| h != primary)
-                .unwrap_or(&primary);
-            
-            try_upload(fallback, data, filename).await
-                .map_err(|_| e)
+    let mut hosts: Vec<&str> = UPLOAD_URLS.to_vec();
+    let mut rng = rand::thread_rng();
+    for i in (1..hosts.len()).rev() {
+        let j = rng.gen_range(0..=i);
+        hosts.swap(i, j);
+    }
+    
+    for host in hosts {
+        match try_upload(host, data, filename).await {
+            Ok(result) => return Ok(result),
+            Err(e) => {
+                last_error = e;
+                continue;
+            }
         }
     }
+    
+    Err(last_error)
 }
 
 async fn try_upload(host: &str, data: &[u8], filename: &str) -> Result<UploadResult, anyhow::Error> {
     let client = reqwest::Client::builder()
-        .user_agent("curl/8.0.0")
+        .user_agent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36")
+        .timeout(Duration::from_secs(120))
+        .connect_timeout(Duration::from_secs(30))
         .build()?;
     
     let part = multipart::Part::bytes(data.to_vec())
         .file_name(filename.to_string())
         .mime_str("application/octet-stream")?;
     
-    let form = multipart::Form::new()
-        .part("file", part);
+    let form = if host.contains("catbox.moe") {
+        if host.contains("litterbox") {
+            multipart::Form::new()
+                .text("reqtype", "fileupload")
+                .text("time", "72h")
+                .part("fileToUpload", part)
+        } else {
+            multipart::Form::new()
+                .text("reqtype", "fileupload")
+                .text("userhash", "")
+                .part("fileToUpload", part)
+        }
+    } else {
+        multipart::Form::new().part("file", part)
+    };
     
     let response = client
         .post(host)

