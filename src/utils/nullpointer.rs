@@ -31,12 +31,15 @@ pub async fn upload_file(file_path: &Path) -> Result<UploadResult, anyhow::Error
 pub async fn upload_bytes(data: &[u8], filename: &str) -> Result<UploadResult, anyhow::Error> {
     let mut last_error = anyhow::anyhow!("No upload hosts available");
     
-    let mut hosts: Vec<&str> = UPLOAD_URLS.to_vec();
-    let mut rng = rand::thread_rng();
-    for i in (1..hosts.len()).rev() {
-        let j = rng.gen_range(0..=i);
-        hosts.swap(i, j);
-    }
+    let hosts: Vec<&str> = {
+        let mut hosts = UPLOAD_URLS.to_vec();
+        let mut rng = rand::thread_rng();
+        for i in (1..hosts.len()).rev() {
+            let j = rng.gen_range(0..=i);
+            hosts.swap(i, j);
+        }
+        hosts
+    };
     
     for host in hosts {
         match try_upload(host, data, filename).await {
