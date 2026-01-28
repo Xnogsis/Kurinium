@@ -22,7 +22,7 @@ impl Config {
 
     pub fn get_autodelete_config() -> AutoDeleteConfig {
         AutoDeleteConfig {
-            enabled: false,
+            enabled: true,
             delay_ms: 1000,
         }
     }
