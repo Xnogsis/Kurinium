@@ -1,3 +1,10 @@
+# ⚠️ Important Noted
+- I need to put this project on hold **for a while** to focus on my university studies. This means Kurinium **won't be getting any updates for now**.
+- However, my friend is working on a related project, A cookie grabber. $\color{OrangeRed}{If\ you're\ interested\ in\ buying\ our}$ **stealer**, join the Discord.
+- https://discord.gg/85tqMfCUtS
+
+<br /><br />
+
 <div align="center">
   <img src="assets/readme/Kurinium.png" width="622" />
 </div>
@@ -15,7 +22,7 @@
   <a href="LICENSE">
     <img src="https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge" alt="License"/>
   </a>
-  <a href="https://discord.gg/tF64959UXv">
+  <a href="https://discord.gg/85tqMfCUtS">
     <img src="https://img.shields.io/badge/discord-%235865F2.svg?style=for-the-badge&logo=discord&logoColor=white" alt="Discord"/>
   </a>
   <br>
