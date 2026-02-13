@@ -1,9 +1,26 @@
-# ⚠️ Important Noted
-- I need to put this project on hold **for a while** to focus on my university studies. This means Kurinium **won't be getting any updates for now**.
-- However, my friend is working on a related project, A cookie grabber. $\color{OrangeRed}{If\ you're\ interested\ in\ buying\ our}$ **stealer**, join the Discord.
-- https://discord.gg/85tqMfCUtS
+> [!Caution]
+> Kurinium has been officially discontinued as we shift our focus toward our premium versions: **Kurion (Stealer)** and **Kurinium (RAT)**. If you are interested in our work and wish to support the project, **feel free to join our Discord!**
 
-<br /><br />
+<a href="https://discord.gg/85tqMfCUtS">
+    <img src="https://img.shields.io/badge/discord-%235865F2.svg?style=for-the-badge&logo=discord&logoColor=white" alt="Discord"/>
+</a>
+<a href="https://discord.gg/85tqMfCUtS">
+    <img src="https://img.shields.io/badge/discord-%235865F2.svg?style=for-the-badge&logo=discord&logoColor=white" alt="Discord"/>
+</a>
+<a href="https://discord.gg/85tqMfCUtS">
+    <img src="https://img.shields.io/badge/discord-%235865F2.svg?style=for-the-badge&logo=discord&logoColor=white" alt="Discord"/>
+</a>
+<a href="https://discord.gg/85tqMfCUtS">
+    <img src="https://img.shields.io/badge/discord-%235865F2.svg?style=for-the-badge&logo=discord&logoColor=white" alt="Discord"/>
+</a>
+<a href="https://discord.gg/85tqMfCUtS">
+    <img src="https://img.shields.io/badge/discord-%235865F2.svg?style=for-the-badge&logo=discord&logoColor=white" alt="Discord"/>
+</a>
+  
+> [!Note]
+> I want to thank everyone for starring the repository. I'm thrilled we've come this far! As of now, Kurinium is officially discontinued, but this source code remains fully functional.
+
+---
 
 <div align="center">
   <img src="assets/readme/Kurinium.png" width="622" />
